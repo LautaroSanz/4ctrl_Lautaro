@@ -9,7 +9,7 @@ def create_app():
     app = Flask(__name__)
 
     # Configuración de la base de datos
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:password@localhost/productsdb'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:password@db/productsdb'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Configuración del tiempo de sesión

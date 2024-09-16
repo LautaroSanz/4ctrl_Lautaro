@@ -1,3 +1,12 @@
+
+CREATE TABLE users (
+    id INT NOT NULL AUTO_INCREMENT,
+    username VARCHAR(80) NOT NULL UNIQUE,
+    password VARCHAR(255),
+    PRIMARY KEY (id)
+);
+
+
 -- Tabla 'products'
 CREATE TABLE products (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -19,6 +28,6 @@ CREATE INDEX idx_brands_name ON brands (name);
 -- Agregar columna 'brand' a la tabla 'products' y definir la restricción de clave foránea
 
 ALTER TABLE products
-ADD COLUMN brand VARCHAR(100),
+ADD COLUMN brand VARCHAR(255),
 ADD CONSTRAINT fk_brand
 FOREIGN KEY (brand) REFERENCES brands(name);

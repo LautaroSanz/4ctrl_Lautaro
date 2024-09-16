@@ -1,0 +1,32 @@
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: productsdb
+    volumes:
+      - ./db_data:/var/lib/mysql
+      - ./docs:/docker-entrypoint-initdb.d
+    networks:
+      - flask_network
+    ports:
+      - "3306:3306"
+
+  web:
+    build: .
+    command: flask run --host=0.0.0.0
+    environment:
+      FLASK_APP: app.py
+      SQLALCHEMY_DATABASE_URI: mysql+mysqlconnector://root:password@db/productsdb
+    volumes:
+      - .:/app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    networks:
+      - flask_network
+
+networks:
+  flask_network:
+    driver: bridge
