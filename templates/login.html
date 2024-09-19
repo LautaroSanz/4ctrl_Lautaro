@@ -4,79 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f2f2f2;
-        }
-        .container {
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .flash-message {
-            color: red;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-        input[type="text"],
-        input[type="password"] {
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        a {
-            display: block;
-            margin-top: 20px;
-            text-align: center;
-            color: #4CAF50;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        a:hover {
-            color: #45a049;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
     <div class="container">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        {% for message in messages %}
-        <p class="flash-message">{{ message }}</p>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
-        <form action="{{ url_for('auth.login') }}" method="POST">
-            <input type="text" name="username" placeholder="Nombre de Usuario" required>
-            <input type="password" name="password" placeholder="Contraseña" required>
+        <p id="flashMessage" class="flash-message"></p>
+        <form id="loginForm">
+            <input type="text" id="username" name="username" placeholder="Nombre de Usuario" required>
+            <input type="password" id="password" name="password" placeholder="Contraseña" required>
             <button type="submit">Iniciar Sesión</button>
         </form>
-        <a href="{{ url_for('auth.register') }}">Registrarse</a>
+        <a href="/register">Registrarse</a>
     </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.redirect_url) {
+                    window.location.href = data.redirect_url;  // Redirigir si el login es exitoso
+                } else {
+                    document.getElementById('flashMessage').textContent = data.message;  // Mostrar mensaje de error
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('flashMessage').textContent = 'Se produjo un error inesperado.';
+            });
+        });
+    </script>
 </body>
 </html>

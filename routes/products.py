@@ -12,7 +12,7 @@ products = Blueprint('products', __name__)
 @login_required
 def home():
     products = Products.query.all()
-    return render_template("products.html", products=products)
+    return jsonify("products.html", products=products)
 
 #Obtenemos todos los productos de la base de datos y lo enviamos como  json al html  para su display
 @products.route('/get_brands', methods=['GET'])

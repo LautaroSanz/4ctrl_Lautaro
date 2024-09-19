@@ -71,12 +71,46 @@
         {% endfor %}
         {% endif %}
         {% endwith %}
-        <form action="{{ url_for('auth.register') }}" method="POST">
-            <input type="text" name="username" placeholder="Nombre de Usuario" required>
-            <input type="password" name="password" placeholder="Contraseña" required>
+        <form id="registerForm">
+            <input type="text" id="username" name="username" placeholder="Nombre de Usuario" required>
+            <input type="password" id="password" name="password" placeholder="Contraseña" required>
             <button type="submit">Registrarse</button>
         </form>
         <a href="{{ url_for('auth.login') }}">Iniciar Sesión</a>
     </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            event.preventDefault();  // Evita el envío tradicional del formulario
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            fetch('{{ url_for('auth.register') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (response.ok) {
+                    // Muestra mensaje de éxito o redirige
+                    window.location.href = '{{ url_for('auth.login') }}'; // Redirige a la página de inicio de sesión
+                } else {
+                    // Muestra mensaje de error
+                    document.querySelector('.flash-message').textContent = data.message;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.querySelector('.flash-message').textContent = 'Hubo un error al procesar la solicitud.';
+            });
+        });
+    </script>
 </body>
 </html>
